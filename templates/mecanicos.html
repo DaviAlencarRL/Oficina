@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Mecânicos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between">
+    <h2>Mecânicos</h2>
+    <button class="btn btn-apple" data-bs-toggle="modal" data-bs-target="#mecanicoModal">+ Adicionar</button>
+</div>
+<div class="row mt-3">
+    {% for m in mecanicos %}
+    <div class="col-md-4 mb-3">
+        <div class="card p-3">
+            <h5>{{ m.nome }}</h5>
+            <p class="text-secondary">Especialidade: {{ m.especialidade or 'Geral' }}<br>Telefone: {{ m.telefone or '-' }}</p>
+            <div><button class="btn btn-sm btn-outline-apple" data-bs-toggle="modal" data-bs-target="#mecanicoModal" data-mecanico='{{ m|tojson|safe }}' onclick="editarMecanico(this)">Editar</button>
+    </div>
+    {% endfor %}
+</div>
+<!-- Modal -->
+<div class="modal fade" id="mecanicoModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <form method="post" action="{{ url_for('salvar_mecanico') }}">
+            <div class="modal-header"><h5>Mecânico</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" name="id">
+                <div class="mb-2"><label>Nome</label><input type="text" name="nome" class="form-control" required></div>
+                <div class="mb-2"><label>Especialidade</label><input type="text" name="especialidade" class="form-control"></div>
+                <div class="mb-2"><label>Telefone</label><input type="text" name="telefone" class="form-control"></div>
+                <div class="mb-2"><label>Observações</label><textarea name="observacoes" class="form-control"></textarea></div>
+            </div>
+            <div class="modal-footer"><button type="submit" class="btn btn-apple">Salvar</button></div>
+        </form>
+    </div></div>
+</div>
+<script>
+function editarMecanico(el) {
+    const data = JSON.parse(el.getAttribute('data-mecanico'));
+    const f = document.querySelector('#mecanicoModal form');
+    f.id.value = data.id;
+    f.nome.value = data.nome;
+    f.especialidade.value = data.especialidade;
+    f.telefone.value = data.telefone;
+    f.observacoes.value = data.observacoes;
+}
+</script>
+{% endblock %}

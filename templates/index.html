@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - AutoManager{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-semibold">Visão Geral</h2>
+</div>
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="d-flex justify-content-between">
+                <div><i class="bi bi-people fs-1 text-primary"></i></div>
+                <div class="text-end"><span class="fs-3 fw-bold">{{ clientes_count or 0 }}</span><br>Clientes</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="d-flex justify-content-between">
+                <div><i class="bi bi-wrench fs-1 text-primary"></i></div>
+                <div class="text-end"><span class="fs-3 fw-bold">{{ os_abertas_count or 0 }}</span><br>OS Abertas</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="d-flex justify-content-between">
+                <div><i class="bi bi-box-seam fs-1 text-primary"></i></div>
+                <div class="text-end"><span class="fs-3 fw-bold">{{ pecas_baixo_estoque or 0 }}</span><br>Peças baixo estoque</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="d-flex justify-content-between">
+                <div><i class="bi bi-cash-stack fs-1 text-primary"></i></div>
+                <div class="text-end"><span class="fs-3 fw-bold">R$ {{ faturamento_mes or 0 }}</span><br>Faturamento no mês</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>Últimas Ordens de Serviço</h5>
+            <table class="table table-sm">
+                <thead><tr><th>#</th><th>Cliente</th><th>Status</th><th>Data</th></tr></thead>
+                <tbody>
+                    {% for os in ultimas_os %}
+                    <tr><td>{{ os.id }}</td><td>{{ os.cliente_nome }}</td><td>{{ os.status }}</td><td>{{ os.data_abertura }}</td></tr>
+                    {% else %}
+                    <tr><td colspan="4">Nenhuma OS registrada.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>Alertas de Estoque</h5>
+            <ul class="list-unstyled">
+                {% for peca in alertas_estoque %}
+                <li class="alert alert-soft py-2"><i class="bi bi-exclamation-triangle"></i> {{ peca.nome }} - estoque: {{ peca.quantidade_estoque }}</li>
+                {% else %}
+                <li class="text-muted">Nenhum alerta no momento.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Clientes</h2>
+    <button class="btn btn-apple" data-bs-toggle="modal" data-bs-target="#clienteModal">+ Novo Cliente</button>
+</div>
+<div class="card p-0">
+    <table class="table table-hover mb-0">
+        <thead><tr><th>ID</th><th>Nome</th><th>Telefone</th><th>Documento</th><th>Veículos</th><th>Ações</th></tr></thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.id }}</td>
+                <td>{{ cliente.nome }}</td>
+                <td>{{ cliente.telefone }}</td>
+                <td>{{ cliente.documento }}</td>
+                <td>{{ cliente.veiculos|length }}</td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-outline-apple" data-bs-toggle="modal" data-bs-target="#clienteModal" data-cliente='{{ cliente|tojson|safe }}' onclick="editarCliente(this)">Editar</a>
+                    <form method="post" action="{{ url_for('excluir_cliente', id=cliente.id) }}" style="display:inline;"><button class="btn btn-sm btn-outline-danger">Excluir</button></form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Cliente -->
+<div class="modal fade" id="clienteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{{ url_for('salvar_cliente') }}">
+                <div class="modal-header"><h5 class="modal-title">Cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="clienteId">
+                    <div class="mb-2"><label>Nome</label><input type="text" name="nome" class="form-control" required></div>
+                    <div class="mb-2"><label>Telefone</label><input type="text" name="telefone" class="form-control"></div>
+                    <div class="mb-2"><label>Email</label><input type="email" name="email" class="form-control"></div>
+                    <div class="mb-2"><label>Documento</label><input type="text" name="documento" class="form-control"></div>
+                    <div class="mb-2"><label>Endereço</label><textarea name="endereco" class="form-control"></textarea></div>
+                    <div class="mb-2"><label>Observações</label><textarea name="observacoes" class="form-control"></textarea></div>
+                </div>
+                <div class="modal-footer"><button type="submit" class="btn btn-apple">Salvar</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+function editarCliente(data) {
+    const data = JSON.parse(el.getAttribute('data-cliente'));
+    document.querySelector('#clienteModal input[name="id"]').value = data.id;
+    document.querySelector('#clienteModal input[name="nome"]').value = data.nome;
+    document.querySelector('#clienteModal input[name="telefone"]').value = data.telefone;
+    document.querySelector('#clienteModal input[name="email"]').value = data.email;
+    document.querySelector('#clienteModal input[name="documento"]').value = data.documento;
+    document.querySelector('#clienteModal textarea[name="endereco"]').value = data.endereco;
+    document.querySelector('#clienteModal textarea[name="observacoes"]').value = data.observacoes;
+}
+</script>
+{% endblock %}
