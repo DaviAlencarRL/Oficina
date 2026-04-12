@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Usuários{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between">
+    <h2>Usuários do Sistema</h2>
+    <button class="btn btn-apple" data-bs-toggle="modal" data-bs-target="#usuarioModal">+ Novo Usuário</button>
+</div>
+<div class="card mt-3">
+    <table class="table">
+        <thead><tr><th>ID</th><th>Nome</th><th>Email</th><th>Ativo</th><th>Ações</th></tr></thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr><td>{{ u.id }}</td><td>{{ u.nome }}</td><td>{{ u.email }}</td><td>{{ 'Sim' if u.ativo else 'Não' }}</td><td><button class="btn btn-sm btn-outline-apple" data-bs-toggle="modal" data-bs-target="#usuarioModal" data-usuario='{{ u|tojson|safe }}' onclick="editarUsuario(this)">Editar</button></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="usuarioModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <form method="post" action="{{ url_for('salvar_usuario') }}">
+            <div class="modal-header"><h5>Usuário</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" name="id">
+                <div class="mb-2"><label>Nome completo</label><input type="text" name="nome" class="form-control" required></div>
+                <div class="mb-2"><label>Email</label><input type="email" name="email" class="form-control" required></div>
+                <div class="mb-2"><label>Senha (deixe em branco para manter)</label><input type="password" name="senha" class="form-control"></div>
+                <div class="mb-2"><label>Telefone</label><input type="text" name="telefone" class="form-control"></div>
+                <div class="mb-2"><label>Ativo</label><select name="ativo"><option value="1">Sim</option><option value="0">Não</option></select></div>
+            </div>
+            <div class="modal-footer"><button type="submit" class="btn btn-apple">Salvar</button></div>
+        </form>
+    </div></div>
+</div>
+<script>
+function editarUsuario(el) {
+    const u = JSON.parse(el.getAttribute('data-usuario'));
+    const f = document.querySelector('#usuarioModal form');
+    f.id.value = u.id;
+    f.nome.value = u.nome;
+    f.email.value = u.email;
+    f.telefone.value = u.telefone;
+    f.ativo.value = u.ativo ? '1' : '0';
+}
+</script>
+{% endblock %}

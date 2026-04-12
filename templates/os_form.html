@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if os else 'Nova' }} Ordem de Serviço{% endblock %}
+{% block content %}
+<div class="card p-4">
+    <h2>{{ 'Editar OS' if os else 'Abrir Ordem de Serviço' }}</h2>
+    <form method="post" action="{{ url_for('salvar_os') }}">
+        <input type="hidden" name="id" value="{{ os.id if os else '' }}">
+        <div class="row">
+            <div class="col-md-6 mb-3"><label>Cliente</label><select name="cliente_id" class="form-select" required>{% for c in clientes %}<option value="{{ c.id }}" {% if os and os.cliente_id==c.id %}selected{% endif %}>{{ c.nome }}</option>{% endfor %}</select></div>
+            <div class="col-md-6 mb-3"><label>Veículo</label><select name="veiculo_id" class="form-select" required>{% for v in veiculos %}<option value="{{ v.id }}" {% if os and os.veiculo_id==v.id %}selected{% endif %}>{{ v.placa }} - {{ v.modelo }}</option>{% endfor %}</select></div>
+            <div class="col-md-6 mb-3"><label>Mecânico responsável</label><select name="mecanico_id" class="form-select">{% for m in mecanicos %}<option value="{{ m.id }}" {% if os and os.mecanico_id==m.id %}selected{% endif %}>{{ m.nome }}</option>{% endfor %}</select></div>
+            <div class="col-md-6 mb-3"><label>Status</label><select name="status" class="form-select"><option value="ABERTA">ABERTA</option><option value="EM_ANDAMENTO">EM ANDAMENTO</option><option value="AGUARDANDO_PEÇAS">AGUARDANDO PEÇAS</option><option value="CONCLUÍDA">CONCLUÍDA</option><option value="CANCELADA">CANCELADA</option></select></div>
+            <div class="col-12 mb-3"><label>Problema relatado</label><textarea name="problema_relatado" class="form-control" rows="2">{{ os.problema_relatado if os else '' }}</textarea></div>
+            <div class="col-12 mb-3"><label>Diagnóstico</label><textarea name="diagnostico" class="form-control" rows="2">{{ os.diagnostico if os else '' }}</textarea></div>
+            <div class="col-12 mb-3"><label>Observações</label><textarea name="observacoes" class="form-control">{{ os.observacoes if os else '' }}</textarea></div>
+        </div>
+        <button type="submit" class="btn btn-apple">Salvar OS</button>
+        <a href="{{ url_for('ordens_servico') }}" class="btn btn-outline-apple">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
