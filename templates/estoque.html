@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Estoque de Peças{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h2>Peças</h2>
+    <button class="btn btn-apple" data-bs-toggle="modal" data-bs-target="#pecaModal">+ Nova Peça</button>
+</div>
+<div class="card p-0">
+    <table class="table">
+        <thead><tr><th>Código</th><th>Nome</th><th>Estoque</th><th>Custo</th><th>Preço Venda</th><th>Ações</th></tr></thead>
+        <tbody>
+            {% for p in pecas %}
+            <tr class="{% if p.quantidade_estoque <= 5 %}table-warning{% endif %}">
+                <td>{{ p.codigo }}</td><td>{{ p.nome }}</td><td>{{ p.quantidade_estoque }}</td>
+                <td>R$ {{ p.custo }}</td><td>R$ {{ p.preco_venda }}</td>
+                <td><button class="btn btn-sm btn-outline-apple" data-bs-toggle="modal" data-bs-target="#pecaModal" data-peca='{{ p|tojson|safe }}' onclick="editarPeca(this)">Editar</button>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if alerta_baixo_estoque %}
+    <div class="alert alert-warning m-3">⚠️ Algumas peças estão com estoque baixo.</div>
+    {% endif %}
+</div>
+<!-- Modal Peça -->
+<div class="modal fade" id="pecaModal" tabindex="-1">
+    <div class="modal-dialog"><div class="modal-content">
+        <form method="post" action="{{ url_for('salvar_peca') }}">
+            <div class="modal-header"><h5>Peça</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" name="id">
+                <div class="mb-2"><label>Código</label><input type="text" name="codigo" class="form-control"></div>
+                <div class="mb-2"><label>Nome</label><input type="text" name="nome" class="form-control" required></div>
+                <div class="mb-2"><label>Quantidade em estoque</label><input type="number" name="quantidade_estoque" class="form-control" value="0"></div>
+                <div class="mb-2"><label>Custo (R$)</label><input type="number" step="0.01" name="custo" class="form-control"></div>
+                <div class="mb-2"><label>Preço venda (R$)</label><input type="number" step="0.01" name="preco_venda" class="form-control"></div>
+                <div class="mb-2"><label>Observações</label><textarea name="observacoes" class="form-control"></textarea></div>
+            </div>
+            <div class="modal-footer"><button type="submit" class="btn btn-apple">Salvar</button></div>
+        </form>
+    </div></div>
+</div>
+<script>
+function editarPeca(el) {
+    const p = JSON.parse(el.getAttribute('data-peca'));
+    const f = document.querySelector('#pecaModal form');
+    f.id.value = p.id;
+    f.codigo.value = p.codigo;
+    f.nome.value = p.nome;
+    f.quantidade_estoque.value = p.quantidade_estoque;
+    f.custo.value = p.custo;
+    f.preco_venda.value = p.preco_venda;
+    f.observacoes.value = p.observacoes;
+}
+</script>
+{% endblock %}
